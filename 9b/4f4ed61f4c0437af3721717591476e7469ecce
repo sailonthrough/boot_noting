@@ -1,0 +1,20 @@
+src/main/java/com/trip/noting/count/UserOnlineCompute.java
+  s_646cb2df63ffce::t_3ced2b7570d3ec 65-104
+  s_646cb2df63ffce::t_4e366c77c8c1d9 182-211
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "9b4f4ed61f4c0437af3721717591476e7469ecce",
+  "prompts": {},
+  "sessions": {
+    "s_646cb2df63ffce": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0e6fe189-db32-4c1f-be58-4682002ae018",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "zouyaowen <1227701903@qq.com>"
+    }
+  }
+}
