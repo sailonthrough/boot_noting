@@ -6,9 +6,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
@@ -159,6 +157,22 @@ public class ThreadPoolController {
         //     throw new RuntimeException("执行失败");
         // }
         return "testTask-执行成功";
+    }
+
+    @GetMapping("/testTaskE")
+    public String testTaskE() throws Exception {
+        ExecutorService executor = Executors.newCachedThreadPool();
+        executor.execute(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(2);
+                System.out.println("3333333");
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        executor.shutdown();
+        System.out.println("111111");
+        return "22222";
     }
 
 }

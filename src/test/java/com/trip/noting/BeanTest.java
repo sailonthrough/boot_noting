@@ -13,10 +13,14 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.StopWatch;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -714,8 +718,91 @@ public class BeanTest {
 
     @Test
     public void sort1() throws ParseException {
-        List<User> plansResult = new ArrayList<>();
-        plansResult.sort(Comparator.comparing(User::getId));
+        String str = "%2$s%1$s";
+        String format = String.format(str, "中国", "上海");
+        System.out.println(format);
+    }
+
+    @Test
+    public void sort2() throws ParseException, InterruptedException {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start("task1");
+        TimeUnit.MILLISECONDS.sleep(200);
+        stopWatch.stop();
+        stopWatch.start("task2");
+        TimeUnit.MILLISECONDS.sleep(150);
+        stopWatch.stop();
+        StopWatch.TaskInfo[] taskInfo = stopWatch.getTaskInfo();
+        for (StopWatch.TaskInfo info : taskInfo) {
+            String taskName = info.getTaskName();
+            long timeMillis = info.getTimeMillis();
+            System.out.println("taskName:" + taskName + ", timeMillis:" + timeMillis);
+        }
+        long totalTimeMillis = stopWatch.getTotalTimeMillis();
+        System.out.println(totalTimeMillis);
+    }
+
+    @Test
+    public void itemSort() throws ParseException, InterruptedException {
+        String[] testStrings = {
+                "Hello %s",                // 包含 %s
+                "Value: %d",               // 包含 %d
+                "Number %1$s",             // 包含 %1$s
+                "Percent 100%%",           // 转义的百分号，不是占位符
+                "No placeholder here",     // 没有占位符
+                "Mixed %2$f and %s"        // 包含多个
+        };
+
+        for (String str : testStrings) {
+            boolean has = hasPlaceholder(str);
+            System.out.println("\"" + str + "\" -> " + has);
+        }
+    }
+
+    private boolean hasPlaceholder(String input) {
+        // 正则解释：
+        // %                    字面百分号
+        // (?:\\d+\\$)?         可选：数字 + $（如 1$）
+        // [a-zA-Z%]            转换符：字母 或 %（表示转义的百分号）
+        // 注意：%% 也会被匹配，如果想排除它，可以改进正则，但通常简单匹配就够了
+        String regex = "%(?:\\d+\\$)?[-#+ 0,(]*\\d*(?:\\.\\d+)?[bBhHsScCdoxXeEfgGaAtTn]";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+        return matcher.find();
+    }
+
+    @Test
+    public void hashTest() throws NoSuchAlgorithmException {
+        String input = "";
+        // 1. 获取 SHA-256 MessageDigest
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        // 2. 计算 hash（得到 256-bit = 32-byte 的结果）
+        byte[] hashBytes = digest.digest(input.getBytes(StandardCharsets.UTF_8));
+        // 3. 转为十六进制
+        String hex = bytesToHex(hashBytes);
+        System.out.println("SHA-256 Hex:");
+        System.out.println(hex);
+
+        // 4. 转为 Base64
+        String base64 = Base64.getEncoder().encodeToString(hashBytes);
+        System.out.println("SHA-256 Base64:");
+        System.out.println(base64);
+    }
+
+    // byte[] -> hex string
+    private static String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+
+    @Test
+    public void testTrue(){
+        if (1 > 2 && (true) || (true)) {
+            System.out.println("aaaaaa");
+        }
     }
 
 
